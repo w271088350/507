@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>静水 · 我的小鱼缸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2b4a45;
+    --ink-soft:#4c6e68;
+    --water:#bfe3dc;
+    --water-deep:#7fc6bc;
+    --glass:#ffffffcc;
+    --glass-brd:#ffffff99;
+    --accent:#f29b83;    /* 温柔珊瑚 */
+    --accent-2:#ffd3a6;  /* 琥珀暖光 */
+    --sand:#f4e2c2;
+    --shadow:0 24px 60px -18px rgba(31,78,69,.45);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  html,body{height:100%;}
+  body{
+    min-height:100%;
+    display:grid;
+    place-items:center;
+    padding:28px;
+    font-family:"Noto Serif SC",serif;
+    color:var(--ink);
+    background:
+      radial-gradient(120% 90% at 15% 10%, #eaf6f2 0%, transparent 55%),
+      radial-gradient(120% 100% at 90% 5%, #f8e9da 0%, transparent 50%),
+      linear-gradient(160deg,#e7f2ee 0%, #dcebe6 45%, #f3e7d8 100%);
+  }
+
+  /* 桌面小窗的姿态：一个立着的玻璃缸 */
+  .aquarium{
+    position:relative;
+    width:min(520px, 92vw);
+    background:var(--glass);
+    backdrop-filter:blur(14px);
+    border:1.5px solid var(--glass-brd);
+    border-radius:46px 46px 34px 34px;
+    box-shadow:var(--shadow), inset 0 1px 0 #fff, inset 0 -2px 0 rgba(255,255,255,.4);
+    overflow:hidden;
+    transform:translateZ(0);
+  }
+  /* 缸口金属包边 */
+  .rim{
+    position:absolute;inset:0;pointer-events:none;z-index:40;
+    border-radius:inherit;
+    box-shadow:
+      inset 0 3px 6px -2px rgba(70,120,110,.25),
+      inset 0 -4px 8px -2px rgba(70,120,110,.18);
+  }
+  .rim::before{
+    content:"";position:absolute;top:-8px;left:-6px;right:-6px;height:26px;
+    background:linear-gradient(180deg,#fdf4e3,#e9d3ab);
+    border-radius:36px 36px 14px 14px;
+    box-shadow:0 2px 6px rgba(90,70,30,.25);
+  }
+  .rim::after{
+    content:"✦";position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+    color:#a9874f;font-size:14px;filter:drop-shadow(0 1px 1px #fff);
+  }
+
+  /* 头部：问候 + 城市 + 天气 */
+  .head{
+    position:relative;z-index:50;
+    padding:44px 34px 16px;
+    text-align:center;
+  }
+  .greet{
+    font-size:20px;letter-spacing:.5px;color:var(--ink-soft);
+    display:flex;align-items:center;gap:8px;justify-content:center;
+  }
+  .city{
+    margin-top:10px;font-size:13px;color:#6d8f88;letter-spacing:2px;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .city::before,.city::after{content:"·";opacity:.6;}
+
+  /* 天气条：温度 + 天气 + 生活小贴士 */
+  .weather{
+    position:relative;z-index:50;
+    display:flex;align-items:center;gap:14px;
+    justify-content:center;
+    margin:12px 30px 4px;
+    padding:12px 18px;
+    background:rgba(255,255,255,.5);
+    border:1px solid rgba(255,255,255,.7);
+    border-radius:100px;
+    box-shadow:inset 0 1px 2px rgba(255,255,255,.8);
+  }
+  .temp{font-size:44px;font-weight:600;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .temp small{font-size:22px;vertical-align:top;color:var(--accent);}
+  .w-info{text-align:left;min-width:88px;}
+  .w-info .cond{font-size:15px;}
+  .w-info .range{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+  .w-icon{font-size:34px;line-height:1;}
+  .tip{
+    flex:1;min-width:110px;font-size:12.5px;line-height:1.5;color:#5d7f78;
+    padding-left:14px;border-left:1px dashed rgba(43,74,69,.25);text-align:left;
+  }
+  .tip b{color:var(--accent);font-weight:600;}
+
+  /* 鱼的"气泡思绪"：温柔提醒 */
+  .bubble-thought{
+    position:relative;z-index:50;
+    margin:10px 26px 2px;
+    padding:12px 18px;
+    font-family:"Ma Shan Zheng",cursive;
+    font-size:19px;line-height:1.6;color:#3f645d;
+    background:rgba(255,255,255,.62);
+    border-radius:18px 18px 18px 6px;
+    border:1px solid rgba(255,255,255,.8);
+    box-shadow:0 2px 8px rgba(70,120,110,.12);
+    text-align:center;
+    animation:fadeIn .6s ease both;
+  }
+  .bubble-thought .who{display:block;font-family:"Noto Serif SC",serif;font-size:11px;letter-spacing:1px;color:#9a8a6a;margin-bottom:2px;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  /* 状态小灯 */
+  .status-row{
+    position:relative;z-index:50;
+    display:flex;justify-content:center;gap:18px;
+    margin:10px 0 6px;font-size:12px;color:#7a9b94;letter-spacing:1px;
+  }
+  .status-row .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:1px;}
+
+  /* 鱼缸画布 */
+  .tank-wrap{
+    position:relative;z-index:20;
+    margin:4px 14px 14px;
+    border-radius:22px;
+    overflow:hidden;
+    height:300px;
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55), inset 0 0 40px rgba(60,140,130,.18);
+    background:#9fd6cc;
+  }
+  canvas{display:block;width:100%;height:100%;}
+
+  /* 点击喂食提示 */
+  .hint{
+    position:relative;z-index:50;text-align:center;
+    font-size:11px;color:#9ab7b1;margin-bottom:16px;letter-spacing:4px;
+    cursor:default;
+  }
+
+  /* 加载态 */
+  .loading{
+    position:absolute;inset:0;z-index:60;
+    display:grid;place-items:center;
+    background:rgba(231,242,238,.85);backdrop-filter:blur(4px);
+    font-family:"Ma Shan Zheng",cursive;font-size:22px;color:#4c6e68;
+    transition:opacity .6s ease;letter-spacing:2px;
+  }
+  .loading.hide{opacity:0;pointer-events:none;}
+
+  @media (max-width:440px){
+    .weather{flex-wrap:wrap;gap:8px;}
+    .tip{min-width:100%;border-left:none;border-top:1px dashed rgba(43,74,69,.22);padding:8px 0 0;text-align:center;}
+  }
+</style>
+</head>
+<body>
+  <div class="aquarium">
+    <div class="rim"></div>
+
+    <div class="head">
+      <div class="greet" id="greet">🌿 慢慢来，今天也从容</div>
+      <div class="city" id="city"><span id="clock">·</span></div>
+    </div>
+
+    <div class="weather">
+      <span class="w-icon" id="weatherIcon">☀️</span>
+      <span class="temp" id="temp">--<small>°</small></span>
+      <div class="w-info">
+        <div class="cond" id="cond">正在感受天气…</div>
+        <div class="range" id="range"></div>
+      </div>
+      <div class="tip" id="tip">一小会儿就能缓过来 ☕</div>
+    </div>
+
+    <div class="bubble-thought" id="thought">
+      <span class="who">— 缸里的小鱼想说 —</span>
+      <span id="note">先给你留句话 🌊</span>
+    </div>
+
+    <div class="status-row">
+      <span><i class="dot" style="background:#6fbdb0"></i>水呼吸顺畅</span>
+      <span><i class="dot" id="modeDot" style="background:#f29b83"></i><span id="mode">晴水微澜</span></span>
+    </div>
+
+    <div class="tank-wrap">
+      <canvas id="tank"></canvas>
+    </div>
+
+    <div class="hint">轻点水面，喂它们一点光</div>
+
+    <div class="loading" id="loading">水温正在感知…</div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 视觉：给鱼缸一个确定的"环境" ---------------- */
+  const AMBIENTS = {
+    sunny:   { water:'linear-gradient(180deg,#c9ecE2,#8fd3c6)', caustic:'rgba(255,255,255,.35)', speed:1.25, warmth:.10, light:1.00 },
+    cloudy:  { water:'linear-gradient(180deg,#bfe0da,#7cc4bb)', caustic:'rgba(255,255,255,.22)', speed:.90,  warmth:-.05, light:.82 },
+    rain:    { water:'linear-gradient(180deg,#a9d4cd,#6cb4ac)', caustic:'rgba(255,255,255,.16)', speed:1.00, warmth:-.15, light:.72 },
+    snow:    { water:'linear-gradient(180deg,#d9ece9,#a3cfc9)', caustic:'rgba(255,255,255,.26)', speed:.78,  warmth:-.25, light:.86 },
+    fog:     { water:'linear-gradient(180deg,#cfe5e1,#a0ccc5)', caustic:'rgba(255,255,255,.20)', speed:.70,  warmth:.00,  light:.78 },
+    thunder: { water:'linear-gradient(180deg,#8fc3bd,#5faaa2)', caustic:'rgba(255,255,255,.13)', speed:1.10, warmth:-.30, light:.60 },
+    hot:     { water:'linear-gradient(180deg,#ffdcc0,#ffc9a0)', caustic:'rgba(255,255,255,.30)', speed:1.30, warmth:.40,  light:1.05 },
+    cold:    { water:'linear-gradient(180deg,#bcdfe0,#7fb6bd)', caustic:'rgba(255,255,255,.24)', speed:.80,  warmth:-.32, light:.80 },
+    neutral: { water:'linear-gradient(180deg,#c9ece5,#8ed0c5)', caustic:'rgba(255,255,255,.26)', speed:1.0,  warmth:.00,  light:.9  },
+  };
+
+  const MODE_LABEL = {
+    sunny:'晴水微澜', cloudy:'云影轻移', rain:'雨丝入水', snow:'初雪静落',
+    fog:'薄雾笼纱', thunder:'雷雨渐歇', hot:'水暖正好', cold:'水凉轻寒', neutral:'静水微光'
+  };
+
+  /* ---------------- 天气 & 地理位置 (Open-Meteo，无需 key) ---------------- */
+  const state = {
+    coords:null, city:'你所在的城市', weather:null,
+    ambient:AMBIENTS.neutral, condition:'', temp:null, max:null, min:null
+  };
+  const WEATHER_MAP = {
+    0:'sunny',1:'sunny',2:'cloudy',3:'cloudy',45:'fog',48:'fog',
+    51:'rain',53:'rain',55:'rain',61:'rain',63:'rain',65:'rain',
+    80:'rain',81:'rain',82:'thunder',95:'thunder',96:'thunder',99:'thunder',
+    71:'snow',73:'snow',75:'snow',77:'snow',85:'snow',86:'snow'
+  };
+  const COND_TEXT = {
+    sunny:'晴朗',cloudy:'多云',rain:'细雨',snow:'小雪',fog:'有雾',
+    thunder:'雷雨',hot:'晴热',cold:'偏凉',neutral:'温和'
+  };
+
+  function guessAmbient(code, temp){
+    let base = WEATHER_MAP[code] || 'neutral';
+    if (base==='sunny' && temp!==null && temp>=32) base='hot';
+    if ((base==='sunny'||base==='cloudy'||base==='neutral') && temp!==null && temp<=8) base='cold';
+    return base;
+  }
+
+  function locateAndFetch(){
+    return new Promise((resolve)=>{
+      if (navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(pos=>resolve(pos.coords),
+          ()=>{ fetchGeoByIP().then(resolve).catch(()=>resolve(null)); },
+          {timeout:7000, maximumAge:600000}
+        );
+      } else {
+        fetchGeoByIP().then(resolve).catch(()=>resolve(null));
+      }
+    }).then(coords=>{
+      state.coords=coords;
+      if (coords) return Promise.all([fetchWeather(coords), reverseCity(coords)]);
+      return Promise.reject(new Error('no location'));
+    });
+  }
+
+  function fetchGeoByIP(){
+    return fetch('https://ipapi.co/json/')
+      .then(r=>r.json())
+      .then(j=>{ if(!j.latitude||!j.longitude) throw 0; return {latitude:j.latitude, longitude:j.longitude}; });
+  }
+
+  function fetchWeather(coords){
+    const url='https://api.open-meteo.com/v1/forecast?latitude='+coords.latitude+
+      '&longitude='+coords.longitude+
+      '&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&current=temperature_2m,relative_humidity_2m&timezone=auto&forecast_days=1';
+    return fetch(url).then(r=>r.json()).then(d=>{
+      const cw=d.current_weather;
+      state.weather=d;
+      state.temp=Math.round(d.current.temperature_2m ?? cw.temperature);
+      state.max=Math.round(d.daily.temperature_2m_max[0]);
+      state.min=Math.round(d.daily.temperature_2m_min[0]);
+      state.condition=guessAmbient(cw.weathercode, state.temp);
+      state.ambient=AMBIENTS[state.condition];
+    });
+  }
+
+  function reverseCity(coords){
+    return fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+
+      coords.latitude+'&longitude='+coords.longitude+'&localityLanguage=zh')
+      .then(r=>r.json())
+      .then(c=>{ state.city = c.city || c.locality || c.principalSubdivision || '你的城市'; })
+      .catch(()=>{ state.city='你的城市'; });
+  }
+
+  /* ---------------- 健康提醒：温柔地说 ---------------- */
+  const REMINDER_POOL = [
+    {t:["把手机放远三分钟，看水里的光","让眼睛跟着鱼游一会儿"], tag:"护眼"},
+    {t:["喝一口温水，别让喉咙变沙漠","给身体也添一点水呀"], tag:"补水"},
+    {t:["起来伸个懒腰，肩颈松一松","坐久了对脊背不温柔"], tag:"起身"},
+    {t:["深呼吸三次，气顺了，心也静了","缓慢的呼吸是免费的镇定剂"], tag:"呼吸"},
+    {t:["把手边的事先放一小会儿","你不是在偷懒，是在充电"], tag:"休息"}
+  ];
+
+  function pickReminder(){
+    const h=new Date().getHours();
+    // 上午中段 & 下午中段偏护眼/起身；深夜提醒早睡
+    let text, emoji;
+    if (h>=22 || h<6){
+      text = "夜深了，早点把那盏灯关掉，好梦呀 🌙";
+      emoji='🌙';
+    } else {
+      const p = REMINDER_POOL[Math.floor(Math.random()*REMINDER_POOL.length)];
+      text = p.t[Math.floor(Math.random()*p.t.length)];
+      emoji = p.tag==='补水'?'💧':p.tag==='护眼'?'👀':p.tag==='起身'?'🧘':p.tag==='呼吸'?'🌬️':'☕';
+    }
+    return {text, emoji};
+  }
+
+  function renderReminder(){
+    const el=document.getElementById('note');
+    const {text,emoji}=pickReminder();
+    el.textContent=emoji+' '+text;
+    el.parentElement.style.animation='none';
+    void el.parentElement.offsetWidth;
+    el.parentElement.style.animation='fadeIn .6s ease both';
+  }
+
+  function weatherTips(current){
+    if (current==='rain'||current==='thunder') return '出门记得带伞 <b>🌂</b>';
+    if (current==='snow'||current==='cold')  return '天凉了些，添件外套 <b>🧥</b>';
+    if (current==='hot'||current==='sunny')  return '紫外线不低，补点防晒 <b>🧴</b>';
+    if (current==='cloudy') return '云多风轻，适合散散步 <b>🚶</b>';
+    if (current==='fog')    return '雾气重，外出慢一点 <b>👌</b>';
+    return '今天水波正好，慢慢来 <b>🍃</b>';
+  }
+
+  function renderWeatherUI(){
+    const cond=state.condition;
+    document.getElementById('weatherIcon').textContent =
+      {sunny:'☀️',cloudy:'⛅',rain:'🌧️',snow:'🌨️',fog:'🌫️',thunder:'⛈️',hot:'☀️',cold:'🌬️',neutral:'🌤️'}[cond];
+    document.getElementById('temp').innerHTML=(state.temp??'--')+'<small>°</small>';
+    document.getElementById('cond').textContent=COND_TEXT[cond];
+    document.getElementById('range').textContent='高 '+state.max+'° · 低 '+state.min+'°';
+    document.getElementById('tip').innerHTML=weatherTips(cond);
+    document.getElementById('mode').textContent=MODE_LABEL[cond];
+    document.getElementById('modeDot').style.background = cond==='hot'?'#f08a5d':(cond==='cold'||cond==='rain'||cond==='thunder'?'#6fb6bd':'#f29b83');
+    document.querySelector('.tank-wrap').style.background=state.ambient.water;
+  }
+
+  /* ---------------- 时钟 ------------- */
+  function tickClock(){
+    const el=document.getElementById('clock');
+    const d=new Date();
+    const hh=String(d.getHours()).padStart(2,'0'), mm=String(d.getMinutes()).padStart(2,'0');
+    let wd=''; 
+    const w=[ '日','一','二','三','四','五','六'][d.getDay()];
+    el.textContent = state.city+' · '+hh+':'+mm+' · 周'+wd;
+    const hour=d.getHours();
+    const greet=document.getElementById('greet');
+    if(hour>=5&&hour<9) greet.textContent='☀️ 早安，晨光正轻';
+    else if(hour>=9&&hour<12) greet.textContent='🌿 上午好，慢慢来';
+    else if(hour>=12&&hour<14) greet.textContent='🥢 午饭后来点清静';
+    else if(hour>=14&&hour<18) greet.textContent='🍵 下午茶与深呼吸';
+    else if(hour>=18&&hour<22) greet.textContent='🌙 傍晚了，松弛下来';
+    else greet.textContent='🌛 夜深了，早些安歇';
+  }
+  setInterval(tickClock,30000);
+
+  /* ---------------- 鱼缸动画 ---------------- */
+  const canvas=document.getElementById('tank');
+  const ctx=canvas.getContext('2d');
+  let W=0,H=0,DPR=1;
+
+  function resize(){
+    const r=canvas.getBoundingClientRect();
+    DPR=Math.min(window.devicePixelRatio||1, 2);
+    W=r.width; H=r.height;
+    canvas.width=Math.round(W*DPR);
+    canvas.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  window.addEventListener('resize',()=>{resize();placeFish();});
+
+  /* --- 鱼 --- */
+  const fishPalette=[
+    {body:['#ffb46b','#f0846a'], fin:'#e46a55'},   // 金鱼橙
+    {body:['#ffffff','#f2696b'], fin:'#e9555f'},   // 锦鲤
+    {body:['#9ad7e6','#4f9fd6'], fin:'#3f8ec6'},   // 蓝唐
+    {body:['#ffd7e0','#f49ac1'], fin:'#e97ba8'},   // 粉霓虹
+    {body:['#fffbe0','#ffd25e'], fin:'#f0b429'}    // 琥珀
+  ];
+  const fish=[];
+  const BUBBLES=[];
+  const PLANTS=[];
+  const FEED=[];
+  const moles=[];
+  let feedTimer=0;
+
+  function mkFish(o){
+    const sizes=[1,1,1.15,0.85][Math.floor(Math.random()*4)];
+    return Object.assign({
+      x:o.x, y:o.y, vx:(Math.random()-.5), vy:0,
+      len:26*sizes, tone:Math.floor(Math.random()*fishPalette.length),
+      amp:(0.35+Math.random()*0.5), freq:(0.6+Math.random()*1.1),
+      phase:Math.random()*Math.PI*2, tail:0, dir:Math.random()<.5?-1:1,
+      wobble:Math.random()*Math.PI*2
+    },o);
+  }
+  function initAnimals(){
+    fish.length=0;PLANTS.length=0;BUBBLES.length=0;FEED.length=0;
+    const n=4+Math.floor(Math.random()*3);
+    for(let i=0;i<n;i++){
+      fish.push(mkFish({x:W*(0.15+Math.random()*0.7), y:H*(0.25+Math.random()*0.55)}));
+    }
+    // 水草
+    for(let bx=0; bx<7; bx++){
+      PLANTS.push({x:(bx/6)*W, baseY:H, h:(H*.28+Math.random()*H*.22), sway:Math.random()*Math.PI*2, type:bx%3});
+    }
+    // 沙砾圆点
+    moles.length=0;
+    for(let i=0;i<26;i++){ moles.push({x:Math.random()*W,y:H-2-Math.random()*6,r:1.4+Math.random()*2.6}); }
+  }
+  function placeFish(){
+    for(const f of fish){ if(f.x>W)f.x=10; if(f.y<10)f.y=40; }
+  }
+
+  function spawnBubbles(){
+    if(BUBBLES.length<22 && Math.random()<0.4){
+      BUBBLES.push({x:Math.random()*W, y:H+6, r:1+Math.random()*2.6, v:(0.4+Math.random()*0.9), sway:Math.random()*Math.PI*2, o:0.25+Math.random()*0.4});
+    }
+  }
+
+  /* 喂食：点一下画面，撒一点"光"吸引鱼 */
+  function feed(x,y){
+    FEED.push({x,y,life:180});
+    // 附近的鱼向这里游
+    for(const f of fish){
+      if(Math.abs(f.x-x)<W*0.5 && Math.abs(f.y-y)<H*0.6){
+        f.tx=x; f.ty=y; f.seeking=1;
+      }
+    }
+  }
+
+  let t=0;
+  function frame(){
+    t+=0.016;
+    const amb=state.ambient;
+    const sp=amb.speed;
+
+    // 背景水色（带呼吸的轻微明暗）
+    const breath=Math.sin(t*0.4)*0.03;
+    ctx.clearRect(0,0,W,H);
+    let g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0, shadeColor(amb.waterArr[0], breath));
+    g.addColorStop(1, shadeColor(amb.waterArr[1], -breath));
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    // 顶部透入的光
+    ctx.save();
+    let lg=ctx.createLinearGradient(0,0,0,H*0.6);
+    lg.addColorStop(0, amb.caustic); lg.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=lg; ctx.fillRect(0,0,W,H*0.6);
+    ctx.restore();
+
+    // 雨/雪粒子
+    if(state.condition==='rain'||state.condition==='thunder') drawRain();
+    if(state.condition==='snow') drawSnow();
+
+    // 喂食光点
+    feedTimer++;
+    if(feedTimer>260){ spawnBubbleCursor(); }
+    for(let i=FEED.length-1;i>=0;i--){
+      const p=FEED[i]; p.life--;
+      ctx.globalAlpha=Math.max(0,p.life/180)*0.5;
+      ctx.fillStyle='#fff6d8';
+      ctx.beginPath();ctx.arc(p.x,p.y,4,0,7);ctx.fill();
+      ctx.globalAlpha=1;
+      if(p.life<=0) FEED.splice(i,1);
+    }
+
+    // 沙底
+    drawSand();
+    // 水草
+    for(const p of PLANTS) drawPlant(p,amb.speed);
+    // 鱼
+    for(const f of fish) updateFish(f,sp,t);
+    // 气泡
+    spawnBubbles();
+    for(let i=BUBBLES.length-1;i>=0;i--){
+      const b=BUBBLES[i]; b.y-=b.v*sp; b.sway+=0.05;
+      ctx.globalAlpha=b.o;
+      ctx.strokeStyle='rgba(255,255,255,.7)';
+      ctx.lineWidth=1; ctx.beginPath(); ctx.arc(b.x+Math.sin(b.sway)*3,b.y,b.r,0,7); ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,.12)'; ctx.fill();
+      ctx.globalAlpha=1;
+      if(b.y<-8) BUBBLES.splice(i,1);
+    }
+    requestAnimationFrame(frame);
+  }
+  function spawnBubbleCursor(){ /* 由互动触发时对外部可用 */ }
+
+  function updateFish(f,sp,t){
+    const wob=Math.sin(t*f.freq+f.phase);
+    if(f.seeking && f.tx!=null){
+      let dx=f.tx-f.x, dy=f.ty-f.y;
+      const d=Math.hypot(dx,dy);
+      if(d<14){ f.seeking=0; f.tx=null; }
+      else{ f.vx=(dx/d)*24*sp; f.vy=(dy/d)*20*sp + wob*14; }
+    } else {
+      f.vx*=0.98; f.vy*=0.98;
+      f.vx += Math.sin(t*f.freq+f.phase)*0.06*sp;
+      f.vy += Math.cos(t*f.freq+f.wobble)*0.05*sp - 0.02;
+      // 缓缓往上浮的趋向，偶尔下潜
+      if(Math.random()<0.002) f.vy-=1.6;
+    }
+    f.x+=f.vx*sp; f.y+=f.vy*sp;
+    // 边界回游
+    if(f.x<12){f.x=12; f.vx=Math.abs(f.vx); f.dir=1;}
+    if(f.x>W-12){f.x=W-12; f.vx=-Math.abs(f.vx); f.dir=-1;}
+    if(f.y<20){f.y=20; f.vy=Math.abs(f.vy);}
+    if(f.y>H-30){f.y=H-30; f.vy=-Math.abs(f.vy);}
+    f.tail += f.vx*0.12 + wob*0.3;
+    drawFish(f,f.tail);
+  }
+
+  function drawFish(f,tailSwing){
+    const pal=fishPalette[f.tone];
+    const len=f.len*0.85, hgt=len*0.55;
+    const x=f.x, y=f.y;
+    const goingRight = f.dir>0;
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.scale(goingRight?1:-1,1);
+    ctx.rotate(f.vy*(goingRight?0.02:-0.02));
+
+    // 尾巴
+    const tw = Math.sin(tailSwing)*len*0.42;
+    ctx.fillStyle=pal.fin;
+    ctx.beginPath();
+    ctx.moveTo(-len*0.5,0);
+    ctx.lineTo(-len*0.72,-tw*Math.max(0.3,0.2+Math.sin(tailSwing)*0.6)+ (-hgt*0.15));
+    ctx.lineTo(-len*0.72, tw*0.6 - hgt*0.1);
+    ctx.closePath(); ctx.fill();
+
+    // 背鳍与腹鳍
+    ctx.fillStyle=pal.fin;
+    ctx.globalAlpha=.8;
+    ctx.beginPath();
+    ctx.moveTo(-len*0.1,-hgt*0.35);
+    ctx.quadraticCurveTo(len*0.05,-hgt*0.85,-len*0.35,-hgt*0.5);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(len*0.05,hgt*0.4);
+    ctx.quadraticCurveTo(len*0.2,hgt*0.65,0,hgt*0.35);
+    ctx.closePath(); ctx.fill();
+    ctx.globalAlpha=1;
+
+    // 身体（渐变）
+    const bg=ctx.createLinearGradient(0,-hgt/2,0,hgt/2);
+    bg.addColorStop(0,pal.body[0]); bg.addColorStop(1,pal.body[1]);
+    ctx.fillStyle=bg;
+    ctx.beginPath();
+    ctx.moveTo(len*0.5,0);
+    ctx.quadraticCurveTo(-len*0.05,-hgt, -len*0.5,0);
+    ctx.quadraticCurveTo(-len*0.05, hgt,  len*0.5,0);
+    ctx.closePath(); ctx.fill();
+
+    // 眼睛
+    ctx.fillStyle='#16302d';
+    ctx.beginPath(); ctx.arc(len*0.28,-hgt*0.08, len*0.055,0,7); ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(len*0.30,-hgt*0.12, len*0.02,0,7); ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawPlant(p,speed){
+    const sway=Math.sin(t*0.8*speed+p.sway);
+    ctx.save();
+    ctx.translate(p.x,p.baseY);
+    if(p.type===0){
+      ctx.strokeStyle='rgba(58,120,105,.6)'; ctx.lineWidth=3; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(0,0);
+      ctx.quadraticCurveTo(sway*4,-p.h*0.5, sway*8, -p.h);
+      ctx.stroke();
+      ctx.strokeStyle='rgba(58,140,115,.4)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(sway*3,-p.h*0.5);
+      ctx.quadraticCurveTo(sway*5,-p.h*0.7, sway*7,-p.h*0.75);
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle='rgba(43,120,110,.5)'; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.moveTo(0,0);
+      ctx.quadraticCurveTo(sway*6,-p.h*0.6, sway*10,-p.h);
+      ctx.stroke();
+      ctx.fillStyle='rgba(80,160,125,.35)';
+      for(let k=-2;k<=2;k++){
+        const yy=-p.h*0.45+k*p.h*0.18, xx=sway*(6+k);
+        ctx.beginPath(); ctx.ellipse(xx,yy-4, 3, 5, 0,0,7); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawSand(){
+    ctx.fillStyle='rgba(244,226,194,.55)';
+    ctx.beginPath();
+    ctx.moveTo(0,H);
+    ctx.quadraticCurveTo(W*0.3,H-16,W*0.5,H-8);
+    ctx.quadraticCurveTo(W*0.75,H-2,W,H-14);
+    ctx.lineTo(W,H); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='rgba(220,200,160,.7)';
+    for(const m of moles){ ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,7); ctx.fill(); }
+  }
+
+  function drawRain(){
+    ctx.strokeStyle='rgba(140,190,230,.4)'; ctx.lineWidth=1;
+    for(let i=0;i<40;i++){
+      const rx=(Math.sin(t* (3+i) )*7+i*97)%W;
+      const ry=((i*53)+(t*220)%H)% (H*1.2)- 20;
+      ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(rx - 3, ry+10); ctx.stroke();
+    }
+  }
+  function drawSnow(){
+    for(let i=0;i<34;i++){
+      const sx=(Math.sin(t*0.5+i)*9+i*131)%W;
+      const sy=((i*71)+(t*60)% (H*1.2))- 20 + Math.sin(t+i)*6;
+      ctx.globalAlpha=.7; ctx.fillStyle='#fff';
+      ctx.beginPath(); ctx.arc(sx,sy,1.6,0,7); ctx.fill();
+      ctx.globalAlpha=1;
+    }
+  }
+
+  /* 辅助：混合颜色 */
+  function parseHex(c){ c=c.replace('#',''); const n=parseInt(c,16); return [n>>16&255,(n>>8)&255,n&255]; }
+  function shadeColor(hex,amt){
+    if(Math.abs(amt)<0.0001) return hex;
+    const [r,g,b]=parseHex(hex);
+    const rr=Math.max(0,Math.min(255,r+amt*90));
+    const gg=Math.max(0,Math.min(255,g+amt*90));
+    const bb=Math.max(0,Math.min(255,b+amt*90));
+    return 'rgb('+Math.round(rr)+','+Math.round(gg)+','+Math.round(bb)+')';
+  }
+  // 让 ambient.waterArr 可用
+  Object.keys(AMBIENTS).forEach(k=>{
+    const m=AMBIENTS[k];
+    m.waterArr = m.water.match(/#[0-9a-fA-F]{6}/g)||['#bfe3dc','#7fc6bc'];
+  });
+
+  /* ---------------- 交互 ---------------- */
+  let pointerTimer=null;
+  canvas.addEventListener('pointerdown',e=>{
+    const r=canvas.getBoundingClientRect();
+    feed(e.clientX-r.left, e.clientY-r.top);
+  });
+  // 悬停轻抚：偶尔打断提醒气泡让它动一动
+  const thought=document.getElementById('thought');
+  const thoughts=['别坐太久，起来看会儿水吧 🌊','眼睛累了就眨眨，看看远处 🍃','喝口水，喉咙舒服一些 💧','你做得已经很好了，歇会儿 ☁️'];
+  function gentleNudge(){
+    const txt=thoughts[Math.floor(Math.random()*thoughts.length)];
+    document.getElementById('note').textContent='🌬️ '+txt;
+    thought.style.animation='none'; void thought.offsetWidth;
+    thought.style.animation='fadeIn .6s ease both';
+  }
+  setInterval(gentleNudge, 120000); // 每两分钟一次轻柔提醒
+
+  /* ---------------- 启动 ---------------- */
+  function boot(){
+    resize();
+    initAnimals();
+    renderReminder();
+    renderWeatherUI();
+    tickClock();
+    frame();
+    locateAndFetch()
+      .then(()=>{
+        renderWeatherUI();
+        // 天气影响鱼的作息：晴/热更活跃
+        const amb=state.ambient;
+        canvas.style.filter='brightness('+amb.light+') saturate('+(1+amb.warmth)+')';
+      })
+      .catch(()=>{})
+      .finally(()=>{
+        document.getElementById('loading').classList.add('hide');
+      });
+  }
+  window.addEventListener('load',boot);
+})();
+</script>
+</body>
+</html>
