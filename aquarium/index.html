@@ -277,15 +277,16 @@
   function fetchWeather(coords){
     const url='https://api.open-meteo.com/v1/forecast?latitude='+coords.latitude+
       '&longitude='+coords.longitude+
-      '&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&current=temperature_2m,relative_humidity_2m&timezone=auto&forecast_days=1';
+      '&current=temperature_2m,relative_humidity_2m,weathercode&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1';
     return fetch(url).then(r=>r.json()).then(d=>{
-      const cw=d.current_weather;
+      const cw = (d.current || d.current_weather || {});
+      const t = cw.temperature_2m ?? cw.temperature;
       state.weather=d;
-      state.temp=Math.round(d.current.temperature_2m ?? cw.temperature);
+      state.temp = (t==null) ? null : Math.round(t);
       state.max=Math.round(d.daily.temperature_2m_max[0]);
       state.min=Math.round(d.daily.temperature_2m_min[0]);
-      state.condition=guessAmbient(cw.weathercode, state.temp);
-      state.ambient=AMBIENTS[state.condition];
+      state.condition=guessAmbient(cw.weathercode ?? cw.weather_code, state.temp);
+      state.ambient=AMBIENTS[state.condition] || AMBIENTS.neutral;
     });
   }
 
@@ -679,6 +680,7 @@
     locateAndFetch()
       .then(()=>{
         renderWeatherUI();
+        tickClock();
         // 天气影响鱼的作息：晴/热更活跃
         const amb=state.ambient;
         canvas.style.filter='brightness('+amb.light+') saturate('+(1+amb.warmth)+')';

@@ -206,12 +206,14 @@ function locateAndFetch(){
 function fetchGeoByIP(){return fetch('https://ipapi.co/json/').then(r=>r.json()).then(j=>{if(!j.latitude)throw 0;return {latitude:j.latitude,longitude:j.longitude};});}
 function fetchWeather(c){
   const u='https://api.open-meteo.com/v1/forecast?latitude='+c.latitude+'&longitude='+c.longitude+
-    '&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&current=temperature_2m&timezone=auto&forecast_days=1';
+    '&current=temperature_2m,relative_humidity_2m,weathercode&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1';
   return fetch(u).then(r=>r.json()).then(d=>{
-    const cw=d.current_weather;
-    state.temp=Math.round(d.current.temperature_2m??cw.temperature);
+    const cw=d.current||d.current_weather||{};
+    const t=cw.temperature_2m??cw.temperature;
+    state.temp=(t==null)?null:Math.round(t);
     state.max=Math.round(d.daily.temperature_2m_max[0]);state.min=Math.round(d.daily.temperature_2m_min[0]);
-    state.condition=guessAmbient(cw.weathercode,state.temp);state.ambient=AMBIENTS[state.condition];
+    state.condition=guessAmbient(cw.weathercode??cw.weather_code,state.temp);
+    state.ambient=AMBIENTS[state.condition]||AMBIENTS.neutral;
   });
 }
 function reverseCity(c){return fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+c.latitude+'&longitude='+c.longitude+'&localityLanguage=zh')
@@ -717,6 +719,7 @@ function boot(){
   frame(0);
   locateAndFetch().then(()=>{
     renderWeatherUI();
+    tickClock();
     document.querySelector('.tank-wrap').style.filter='brightness('+state.ambient.light+') saturate('+(1+state.ambient.warm)+')';
   }).catch(()=>{}).finally(()=>document.getElementById('loading').classList.add('hide'));
 }
