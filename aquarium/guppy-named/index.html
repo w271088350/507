@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>玻璃缸 · 孔雀鱼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#35556a; --ink-soft:#5b7b90; --accent:#f0906f;
+    --glass:rgba(235,250,255,.55);
+    --shadow:0 30px 70px -22px rgba(20,60,90,.55);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    min-height:100%;display:grid;place-items:center;padding:28px;
+    font-family:"Noto Serif SC",serif;color:var(--ink);
+    background:
+      radial-gradient(130% 90% at 15% 8%, #e8f3f7 0%, transparent 55%),
+      radial-gradient(120% 100% at 90% 6%, #f3e7da 0%, transparent 50%),
+      linear-gradient(160deg,#e5f0f3 0%,#d6e7ea 45%,#efe3d4 100%);
+  }
+
+  /* ============ 大玻璃缸 ============ */
+  .aquarium{
+    position:relative;width:min(600px,94vw);
+    background:var(--glass);backdrop-filter:blur(12px);
+    border-radius:40px 40px 30px 30px;
+    box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.55);
+    overflow:visible;transform:translateZ(0);
+  }
+  .rim{
+    position:absolute;inset:0;z-index:60;pointer-events:none;border-radius:inherit;
+    box-shadow:inset 0 2px 6px -2px rgba(40,90,120,.28), inset 0 -3px 7px -2px rgba(40,90,120,.2);
+  }
+  .rim::before{ /* 缸口金属包边 */
+    content:"";position:absolute;top:-10px;left:-8px;right:-8px;height:30px;
+    background:linear-gradient(180deg,#fbf3de,#e7d0a4);border-radius:40px 40px 16px 16px;
+    box-shadow:0 2px 6px rgba(80,60,25,.28);
+  }
+  .rim::after{content:"✦";position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+    color:#a9874f;font-size:15px;filter:drop-shadow(0 1px 1px #fff);}
+
+  /* 玻璃缸表面：三层高光，营造厚玻璃透明感 */
+  .glass{
+    position:absolute;inset:0;z-index:45;pointer-events:none;border-radius:inherit;
+  }
+  .glass .top{ /* 水面处的横向反光带 */
+    position:absolute;left:3%;right:3%;top:6px;height:26px;border-radius:30px;
+    background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(120,200,235,.18) 60%,transparent);
+    filter:blur(.4px);
+  }
+  .glass .shine{ /* 弧面高光 */
+    position:absolute;left:6%;top:4%;width:26%;bottom:20%;
+    background:linear-gradient(160deg,rgba(255,255,255,.5),rgba(255,255,255,0) 60%);
+    border-radius:40px;filter:blur(3px);
+    mix-blend-mode:screen;
+  }
+  .glass .edge{ /* 侧壁厚玻璃 */
+    position:absolute;top:6px;bottom:6px;width:9px;border-radius:12px;opacity:.9;
+    background:linear-gradient(90deg,rgba(255,255,255,.85),rgba(160,215,245,.3),rgba(255,255,255,0));
+  }
+  .glass .edge.r{left:auto;right:2px;transform:scaleX(-1);}
+
+  /* 头部信息 */
+  .head{position:relative;z-index:65;padding:44px 34px 14px;text-align:center;}
+  .greet{font-size:20px;letter-spacing:.5px;color:var(--ink-soft);
+    display:flex;gap:8px;justify-content:center;align-items:center;}
+  .city{margin-top:9px;font-size:13px;color:#7495a6;letter-spacing:2px;
+    display:flex;gap:6px;justify-content:center;align-items:center;}
+  .city::before,.city::after{content:"·";opacity:.6;}
+
+  .weather{position:relative;z-index:65;display:flex;align-items:center;gap:14px;
+    justify-content:center;margin:10px 30px 2px;padding:12px 18px;
+    background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.85);border-radius:100px;
+    box-shadow:inset 0 1px 2px rgba(255,255,255,.9);}
+  .temp{font-size:44px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;}
+  .temp small{font-size:22px;vertical-align:top;color:var(--accent);}
+  .w-info{min-width:86px;text-align:left;}
+  .w-info .cond{font-size:15px;}
+  .w-info .range{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+  .w-icon{font-size:34px;}
+  .tip{flex:1;min-width:110px;font-size:12.5px;line-height:1.5;color:#62808f;
+    padding-left:14px;border-left:1px dashed rgba(53,85,106,.28);text-align:left;}
+  .tip b{color:var(--accent);font-weight:600;}
+
+  .bubble-thought{position:relative;z-index:65;margin:10px 26px 2px;padding:12px 18px;
+    font-family:"Ma Shan Zheng",cursive;font-size:19px;line-height:1.6;color:#47727f;
+    background:rgba(255,255,255,.66);border-radius:18px 18px 18px 6px;
+    border:1px solid rgba(255,255,255,.85);box-shadow:0 2px 8px rgba(40,90,110,.14);text-align:center;
+    animation:fadeIn .6s ease both;}
+  .bubble-thought .who{display:block;font-family:"Noto Serif SC",serif;font-size:11px;
+    letter-spacing:1px;color:#97886a;margin-bottom:2px;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .status-row{position:relative;z-index:65;display:flex;justify-content:center;gap:18px;
+    margin:10px 0 6px;font-size:12px;color:#7f9dad;letter-spacing:1px;}
+  .status-row .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:1px;}
+
+  /* 大缸 */
+  .tank-wrap{position:relative;z-index:30;margin:2px 16px 14px;border-radius:20px;overflow:hidden;
+    height:470px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5), inset 0 0 60px rgba(30,110,150,.22);}
+  canvas{display:block;width:100%;height:100%;}
+
+  .hint{position:relative;z-index:65;text-align:center;font-size:11px;color:#9db6c3;
+    margin-bottom:16px;letter-spacing:4px;cursor:default;}
+  .loading{position:absolute;inset:0;z-index:60;display:grid;place-items:center;
+    background:rgba(230,242,245,.86);backdrop-filter:blur(4px);
+    font-family:"Ma Shan Zheng",cursive;font-size:22px;color:#5b7b90;letter-spacing:2px;
+    transition:opacity .6s ease;}
+  .loading.hide{opacity:0;pointer-events:none;}
+
+  @media (max-width:460px){
+    .weather{flex-wrap:wrap;gap:8px;}
+    .tip{min-width:100%;border-left:none;border-top:1px dashed rgba(53,85,106,.22);padding:8px 0 0;text-align:center;}
+    .tank-wrap{height:360px;}
+  }
+</style>
+</head>
+<body>
+  <div class="aquarium">
+    <div class="rim"></div>
+    <div class="glass">
+      <div class="top"></div>
+      <div class="shine"></div>
+      <div class="edge"></div>
+      <div class="edge r"></div>
+    </div>
+
+    <div class="head">
+      <div class="greet" id="greet">🌿 慢慢来，今天也从容</div>
+      <div class="city" id="city"><span id="clock">·</span></div>
+    </div>
+
+    <div class="weather">
+      <span class="w-icon" id="weatherIcon">☀️</span>
+      <span class="temp" id="temp">--<small>°</small></span>
+      <div class="w-info">
+        <div class="cond" id="cond"></div>
+        <div class="range" id="range"></div>
+      </div>
+      <div class="tip" id="tip"></div>
+    </div>
+
+    <div class="bubble-thought" id="thought">
+      <span class="who">— 缸里的小鱼想说 —</span>
+      <span id="note">先给你留句话 🌊</span>
+    </div>
+
+    <div class="status-row">
+      <span><i class="dot" style="background:#4fb0c6"></i>水清澈 · 氧充足</span>
+      <span><i class="dot" id="modeDot" style="background:var(--accent)"></i><span id="mode">孔雀鱼在游</span></span>
+    </div>
+
+    <div class="tank-wrap">
+      <canvas id="tank"></canvas>
+    </div>
+
+    <div class="hint">轻点水面，撒一点光，鱼会游过来</div>
+    <div class="loading" id="loading">玻璃缸正在注入清水…</div>
+  </div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- 水体氛围（真实热带淡水缸色温） ---------------- */
+const AMBIENTS = {
+  sunny:  { w:['#cfeef2','#76c4cf','#3f8da6'], caustic:'rgba(255,255,255,.34)', speed:1.2,  warm:0.32, light:1.02 },
+  cloudy: { w:['#c2e6ec','#6db6c6','#3a7f97'], caustic:'rgba(255,255,255,.22)', speed:.92, warm:-.06, light:.84 },
+  rain:   { w:['#aadce3','#5aa8bc','#2f728e'], caustic:'rgba(255,255,255,.15)', speed:1.0, warm:-.18, light:.72 },
+  snow:   { w:['#d8eef3','#94cbd6','#5da1b6'], caustic:'rgba(255,255,255,.26)', speed:.8,  warm:-.28, light:.9  },
+  fog:    { w:['#cfeaf0','#90c8d4','#62a7bb'], caustic:'rgba(255,255,255,.2)',  speed:.75, warm:.0,  light:.8  },
+  thunder:{ w:['#8dc4cf','#4f96aa','#29617c'], caustic:'rgba(255,255,255,.13)', speed:1.12,warm:-.34, light:.62 },
+  hot:    { w:['#ffe3c4','#ffc194','#e89a5f'], caustic:'rgba(255,255,255,.3)', speed:1.3,  warm:.5,   light:1.06 },
+  cold:   { w:['#bcdce3','#6ca3b5','#3a7891'], caustic:'rgba(255,255,255,.24)', speed:.82, warm:-.36, light:.8  },
+  neutral:{ w:['#c9e9ee','#72b8c6','#3a869d'], caustic:'rgba(255,255,255,.26)', speed:1.0, warm:.05,  light:.92 }
+};
+const MODE_LABEL = {
+  sunny:'阳光正好', cloudy:'云影轻移', rain:'细雨绵绵', snow:'初雪映缸', fog:'薄雾如纱',
+  thunder:'雷雨将歇', hot:'水体偏暖', cold:'水体偏凉', neutral:'静水微光'
+};
+
+const state = {coords:null,city:'你所在的城市',weather:null,ambient:AMBIENTS.neutral,condition:'neutral',temp:null,max:null,min:null};
+const WEATHER_MAP = {0:'sunny',1:'sunny',2:'cloudy',3:'cloudy',45:'fog',48:'fog',51:'rain',53:'rain',55:'rain',
+  61:'rain',63:'rain',65:'rain',80:'rain',81:'rain',82:'thunder',95:'thunder',96:'thunder',99:'thunder',
+  71:'snow',73:'snow',75:'snow',77:'snow',85:'snow',86:'snow'};
+const COND_TEXT = {sunny:'晴朗',cloudy:'多云',rain:'细雨',snow:'小雪',fog:'有雾',thunder:'雷雨',hot:'晴热',cold:'偏凉',neutral:'温和'};
+function guessAmbient(code,temp){
+  let b=WEATHER_MAP[code]||'neutral';
+  if((b==='sunny')&&temp!==null&&temp>=32)b='hot';
+  if((b==='sunny'||b==='cloudy'||b==='neutral')&&temp!==null&&temp<=8)b='cold';
+  return b;
+}
+function locateAndFetch(){
+  const geo=()=>new Promise(r=>{
+    if(navigator.geolocation)navigator.geolocation.getCurrentPosition(
+      p=>r(p.coords),()=>fetchGeoByIP().then(r).catch(()=>r(null)),{timeout:7000,maximumAge:600000});
+    else fetchGeoByIP().then(r).catch(()=>r(null));
+  });
+  return geo().then(c=>{state.coords=c;if(c)return Promise.all([fetchWeather(c),reverseCity(c)]);return Promise.reject();});
+}
+function fetchGeoByIP(){return fetch('https://ipapi.co/json/').then(r=>r.json()).then(j=>{if(!j.latitude)throw 0;return {latitude:j.latitude,longitude:j.longitude};});}
+function fetchWeather(c){
+  const u='https://api.open-meteo.com/v1/forecast?latitude='+c.latitude+'&longitude='+c.longitude+
+    '&current=temperature_2m,relative_humidity_2m,weathercode&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1';
+  return fetch(u).then(r=>r.json()).then(d=>{
+    const cw=d.current||d.current_weather||{};
+    const t=cw.temperature_2m??cw.temperature;
+    state.temp=(t==null)?null:Math.round(t);
+    state.max=Math.round(d.daily.temperature_2m_max[0]);state.min=Math.round(d.daily.temperature_2m_min[0]);
+    state.condition=guessAmbient(cw.weathercode??cw.weather_code,state.temp);
+    state.ambient=AMBIENTS[state.condition]||AMBIENTS.neutral;
+  });
+}
+function reverseCity(c){return fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+c.latitude+'&longitude='+c.longitude+'&localityLanguage=zh')
+  .then(r=>r.json()).then(x=>{state.city=x.city||x.locality||x.principalSubdivision||'你的城市';}).catch(()=>{});}
+
+/* 提醒 */
+const POOL=[
+  {t:["把手机放远三分钟，看水里的光","让眼睛跟着鱼游一会儿"],tag:'护眼'},
+  {t:["喝一口温水，别让喉咙变沙漠","给身体也添一点水呀"],tag:'补水'},
+  {t:["起来伸个懒腰，肩颈松一松","坐久了对脊背不温柔"],tag:'起身'},
+  {t:["深呼吸三次，气顺了心也静了","缓慢的呼吸是免费的镇定剂"],tag:'呼吸'},
+  {t:["把手边的事先放一小会儿","你不是在偷懒，是在充电"],tag:'休息'}
+];
+function pickReminder(){
+  const h=new Date().getHours();
+  if(h>=22||h<6)return {text:"夜深了，早点关灯，好梦呀",emoji:'🌙'};
+  const p=POOL[Math.floor(Math.random()*POOL.length)],t=p.t[Math.floor(Math.random()*p.t.length)];
+  const e=p.tag==='补水'?'💧':p.tag==='护眼'?'👀':p.tag==='起身'?'🧘':p.tag==='呼吸'?'🌬️':'☕';
+  return {text:t,emoji:e};
+}
+function renderReminder(){const el=document.getElementById('note');const {text,emoji}=pickReminder();
+  el.textContent=emoji+' '+text;const p=el.parentElement;p.style.animation='none';void p.offsetWidth;p.style.animation='fadeIn .6s ease both';}
+function weatherTips(c){
+  if(c==='rain'||c==='thunder')return '出门记得带伞 <b>🌂</b>';
+  if(c==='snow'||c==='cold')return '天凉了些，添件外套 <b>🧥</b>';
+  if(c==='hot'||c==='sunny')return '紫外线不低，补点防晒 <b>🧴</b>';
+  if(c==='cloudy')return '云多风轻，适合散散步 <b>🚶</b>';
+  if(c==='fog')return '雾气重，外出慢一点 <b>👌</b>';
+  return '今天水波正好，慢慢来 <b>🍃</b>';
+}
+function renderWeatherUI(){
+  const c=state.condition;
+  document.getElementById('weatherIcon').textContent={sunny:'☀️',cloudy:'⛅',rain:'🌧️',snow:'🌨️',fog:'🌫️',thunder:'⛈️',hot:'☀️',cold:'🌬️',neutral:'🌤️'}[c];
+  document.getElementById('temp').innerHTML=(state.temp??'--')+'<small>°</small>';
+  document.getElementById('cond').textContent=COND_TEXT[c];
+  document.getElementById('range').textContent='高 '+state.max+'° · 低 '+state.min+'°';
+  document.getElementById('tip').innerHTML=weatherTips(c);
+  document.getElementById('mode').textContent=MODE_LABEL[c];
+  document.getElementById('modeDot').style.background=(c==='hot'?'#f08a5d':(c==='rain'||c==='cold'||c==='thunder')?'#4fb0c6':'var(--accent)');
+  const t=document.querySelector('.tank-wrap');t.style.transform='none';
+}
+
+/* 时钟 */
+function tickClock(){
+  const d=new Date(),hh=String(d.getHours()).padStart(2,'0'),mm=String(d.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').textContent=state.city+' · '+hh+':'+mm+' · 周'+['日','一','二','三','四','五','六'][d.getDay()];
+  const h=d.getHours(),g=document.getElementById('greet');
+  g.textContent=h>=5&&h<9?'☀️ 早安，晨光正轻':h>=9&&h<12?'🌿 上午好，慢慢来':h>=12&&h<14?'🥢 午饭后来点清静':
+    h>=14&&h<18?'🍵 下午茶与深呼吸':h>=18&&h<22?'🌙 傍晚了，松弛下来':'🌛 夜深了，早些安歇';
+}
+
+/* ================= 玻璃缸 · 真实孔雀鱼 ================= */
+const canvas=document.getElementById('tank'),ctx=canvas.getContext('2d');
+let W=0,H=0,DPR=1,T=0;
+function resize(){const r=canvas.getBoundingClientRect();DPR=Math.min(window.devicePixelRatio||1,2);
+  W=r.width;H=r.height;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+  buildScenery();}
+window.addEventListener('resize',resize);
+
+/* ---- 孔雀鱼配色（真实孔雀鱼主题） ---- */
+const GUPPY_THEMES=[
+  {top:'#2073b0',bot:'#9fd6e8',fin:'#e8734f',spots:['#f3b23a','#ffffff','#7a2f7a'],tailF:'#f27a3f',tailG:'#e5482f',tailT:'#ffe0b0',blue:'#2a63b5'},
+  {top:'#c23a2e',bot:'#ffd166',fin:'#ff9a3d',spots:['#3a3a6e','#ffffff','#ffd166'],tailF:'#ff6b4a',tailG:'#e23b1e',tailT:'#ffe7c2',blue:'#8c2f6e'},
+  {top:'#0f7e6c',bot:'#a5e7c8',fin:'#ffb03a',spots:['#0b3b70','#ffffff','#2fd4c0'],tailF:'#ff7a3d',tailG:'#e0541f',tailT:'#d8ffe6',blue:'#0a8f8f'},
+  {top:'#5b3bb0',bot:'#c9a7f7',fin:'#ff5f5f',spots:['#2a2a7a','#ffe98a','#ffffff'],tailF:'#ff7ad9',tailG:'#e63a9e',tailT:'#efe0ff',blue:'#6e2fb0'},
+  {top:'#1c6e52',bot:'#7fdb9a',fin:'#f0895a',spots:['#1b3a8f','#ffd166','#ffffff'],tailF:'#ff8a3f',tailG:'#e05a14',tailT:'#eaffd4',blue:'#1b6ed0'}
+];
+const GUPPY=[]; // 孔雀鱼群
+const BUBBLES=[],DETRITUS=[],FEED=[],FOODP={
+  back:[],mid:[],front:[],  // 三层水草
+  wood:null,stones:[]
+};
+
+/* ---- 每一条鱼都有一个名字 ---- */
+const FISH_NAMES=['郑飞鸽','刘志强','乔国栋','杨延','卫涛','李晨','谭傅琴'];
+let nameCursor=0;
+function nextName(){
+  const n=FISH_NAMES[nameCursor % FISH_NAMES.length];
+  nameCursor++;
+  return n;
+}
+
+function rand(a,b){return a+Math.random()*(b-a);}
+function makeFish(){
+  const th=GUPPY_THEMES[Math.floor(Math.random()*GUPPY_THEMES.length)];
+  return { x:rand(W*0.2,W*0.6),y:rand(H*0.2,H*0.6),
+    heading:rand(-3,3), intent:rand(-3,3), speed:rand(70,120),
+    len:rand(26,34), wag:rand(0.9,1.5), phase:rand(0,6.28),
+    theme:th, colorRand:Math.random(), scale:rand(.9,1.2),
+    tx:null,vy:0, snk:rand(.3,.6), boost:0,
+    name:nextName() };
+}
+
+/* ---- 水底造景：沉木 + 石头 + 三层水草 ---- */
+function buildScenery(){
+  const sandY=H*0.86;
+  FOODP.back=[];FOODP.mid=[];FOODP.front=[];
+  // 沉木
+  FOODP.wood={x:W*0.16,y:sandY-6,rot:-0.25,scale:1};
+  // 石头
+  FOODP.stones=[];
+  const stoneN=7;
+  for(let i=0;i<stoneN;i++)FOODP.stones.push({x:(i/stoneN)*W*1.05-8,y:sandY-rand(2,10),r:rand(6,16),tone:Math.random()});
+  // 水草：后景细长飘叶、中景锯齿阔叶(水榕)、前景矮叶
+  const gWorld=()=>({h:rand(H*0.3,H*0.42),w:rand(.5,.9),sway:rand(0,6.28),sp:rand(.5,.9),tone:Math.random()});
+  for(let i=0;i<9;i++)FOODP.back.push({x:(i/8)*W+rand(-20,20),y:sandY-4,...gWorld()});
+  for(let i=0;i<6;i++)FOODP.mid.push({x:(i/5)*W*0.95+rand(-30,10),y:sandY-2,...gWorld()});
+  for(let i=0;i<5;i++)FOODP.front.push({x:(i/4)*W*0.95+rand(-10,20),y:sandY+2,...gWorld()});
+  // 悬浮微粒
+  DETRITUS.length=0;
+  for(let i=0;i<40;i++)DETRITUS.push({x:rand(0,W),y:rand(0,H),r:rand(.5,1.6),v:rand(3,10),p:rand(0,6.28)});
+}
+
+/* 让鱼避免游进水草/底部 */
+function clampFish(){
+  for(const f of GUPPY){
+    if(f.x<8){f.x=8;f.heading=Math.atan2(Math.sin(f.heading),-1);}
+    if(f.x>W-8)f.x=W-8;
+    if(f.y>H*0.82)f.y=H*0.82;
+    if(f.y<18)f.y=18;
+  }
+}
+
+/* ---- 鱼群行为(轻量 boids) ---- */
+function updateSwarm(dt){
+  const nb=GUPPY;
+  for(const f of nb){
+    // 漫游意图：周期性重选
+    f.snk-=dt;
+    if(f.snk<=0){
+      f.intent += rand(-0.5,0.5);
+      f.snk=rand(1.2,3.0);
+    }
+    if(f.tx!=null){
+      const dx=f.tx-f.x,dy=f.ty-f.y,d=Math.hypot(dx,dy);
+      f.intent=Math.atan2(dy,dx);
+      f.boost=Math.min(1,220/d);
+      if(d<16){f.tx=null;f.boost=0;}
+    }else f.boost+= (0-f.boost)*0.02;
+
+    // 同向 + 靠拢 + 分离
+    let ax=0,ay=0,cx=cg(0,0),base=Math.cos(f.heading),sep=0,ang=0;
+    for(const o of nb){
+      if(o===f)continue;
+      const dist=Math.hypot(o.x-f.x,o.y-f.y);
+      if(dist<150&&dist>0.01){
+        ax+=Math.cos(o.heading);ay+=Math.sin(o.heading);
+        ang+= (Math.atan2(o.y-f.y,o.x-f.x))/ (dist*dist/900);
+        if(dist<46){ f.x-= (o.x-f.x)*0.05; f.y-=(o.y-f.y)*0.05; }
+      }
+    }
+    const aim = (Math.atan2(ay+Math.sin(f.intent)*1.4+Math.sin(f.heading),
+                            ax+Math.cos(f.intent)*1.4+base) + Math.atan2(ay,ax)+ang)/3;
+    // 平滑转向
+    let diff=aim-f.heading;
+    while(diff>Math.PI)diff-=Math.PI*2;while(diff<-Math.PI)diff+=Math.PI*2;
+    f.heading += diff*0.06;
+
+    const sp=(f.speed+f.boost*140)*state.ambient.speed;
+    f.x+=Math.cos(f.heading)*sp*dt;
+    f.y+=Math.sin(f.heading)*sp*dt;
+    f.phase+=sp*dt*0.05;
+  }
+  clampFish();
+}
+// 简化：不作群里精确均值，直接漫游+避鱼即可（上已含）
+function cg(){return {x:0,y:0};}
+
+/* ---- 绘制孔雀鱼 ---- */
+function wheel(base,off,alpha){ // 彩虹光泽
+  return 'hsla('+((base+off)%360)+',70%,62%,'+alpha+')';
+}
+function drawGuppy(f){
+  const th=f.theme,len=f.len*1.0;
+  const dir=Math.cos(f.heading)>=0?1:-1;
+  const segs=9;
+  // 脊柱：头部在前，尾部在后
+  const S=[]; const maxW=len*0.17;
+  for(let i=0;i<=segs;i++){
+    const k=i/segs, x= len*(0.5-k);
+    const amp= f.wag*maxW*  (k*k) * Math.sin(f.phase*3 - k*4.2);
+    S.push({x, y:amp});
+  }
+  const pivot=S[segs];               // 尾柄点(末端)
+  const tailAng = Math.atan2(S[segs].y-S[segs-1].y, S[segs].x-S[segs-1].x);
+
+  ctx.save();
+  ctx.translate(f.x,f.y);
+  ctx.rotate(f.heading);
+
+  // 尾鳍(大扇形，孔雀鱼标志) —— 先画在身后
+  drawTail(th,len,pivot,tailAng,f);
+
+  // 身体上下轮廓
+  const up=[],dn=[];
+  for(let i=0;i<=segs;i++){
+    const k=i/segs;
+    const wd = maxW*( k<0.5 ? (0.62+k*0.76) : (1.0-(k-0.5)*1.6)); // 头小中宽尾细
+    // 用局部坐标(相对脊柱点)算 y 方向上下
+    up.push({x:S[i].x, y:S[i].y - wd});
+    dn.push({x:S[i].x, y:S[i].y + wd});
+  }
+  const N=segs;
+  // 身体多边形
+  ctx.beginPath();
+  ctx.moveTo(S[0].x,S[0].y);
+  for(let i=1;i<=N;i++)ctx.lineTo(up[i].x,up[i].y);
+  for(let i=N;i>=1;i--)ctx.lineTo(dn[i].x,dn[i].y);
+  ctx.closePath();
+  const grad=ctx.createLinearGradient(0,-maxW*2.4,0,maxW*2.4);
+  grad.addColorStop(0,shade(th.top,-30));
+  grad.addColorStop(.5,th.top);
+  grad.addColorStop(1,th.bot);
+  ctx.fillStyle=grad;ctx.fill();
+
+  // 条纹光泽：沿身体叠加几条弧形亮线
+  ctx.globalAlpha=.35;
+  ctx.strokeStyle=wheel(190+ f.colorRand*60,0,0.5);
+  ctx.lineWidth=1;
+  for(let i=2;i<N;i++){
+    ctx.beginPath();
+    ctx.moveTo(S[i].x,S[i].y-6);
+    ctx.quadraticCurveTo(S[i].x*0.9,S[i].y, S[i].x, S[i].y+6);
+    ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+
+  // 背鳍(夸大拱形，向前延伸)
+  drawDorsal(th,len,f);
+
+  // 眼
+  ctx.fillStyle='#0e1c20';
+  ctx.beginPath();ctx.arc(len*0.3,-len*0.05,len*0.05,0,7);ctx.fill();
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(len*0.32,-len*0.08,len*0.018,0,7);ctx.fill();
+  // 鳃盖
+  ctx.strokeStyle='rgba(0,20,25,.25)';ctx.lineWidth=.8;
+  ctx.beginPath();ctx.arc(len*0.2,0,len*0.13,Math.PI*0.25,Math.PI*1.25);ctx.stroke();
+
+  // 胸鳍(半透明，轻扇)
+  const flap=Math.sin(f.phase*10)*2;
+  ctx.fillStyle='rgba(200,230,238,.35)';
+  ctx.beginPath();
+  ctx.moveTo(len*0.12,0);
+  ctx.quadraticCurveTo(len*0.28,-len*0.1+flap, len*0.3,-len*0.22);
+  ctx.quadraticCurveTo(len*0.2,0,len*0.12,0);
+  ctx.fill();
+
+  // 体侧高光弧
+  ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1.4;ctx.lineCap='round';
+  ctx.beginPath();
+  ctx.moveTo(len*0.2,-maxW*0.7);
+  ctx.quadraticCurveTo(-len*0.1,-maxW*0.6,-len*0.32,-maxW*0.2);
+  ctx.stroke();
+
+  ctx.restore();
+}
+function drawTail(th,len,pivot,tailAng,f){
+  const R=len*0.92;              // 雄鱼巨大扇形尾
+  const cx=pivot.x, cy=pivot.y;
+  const baseAng=-Math.PI;        // 朝向身后(-x)
+  const half=Math.PI*0.62;
+  const wob=Math.sin(f.phase*3)*0.35;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  const rr=R*(1+f.wag*0.12*Math.sin(f.phase*3));
+  const num=7;
+  for(let i=0;i<=num;i++){
+    const t=i/num, a=baseAng-half + t*half*2 + wob*0.15;
+    const radial = rr*( f.colorRand*0.12+0.9 + 0.1*Math.sin(i*2.3+f.colorRand*8) );
+    ctx.lineTo(cx+Math.cos(a)*radial, cy+Math.sin(a)*radial*0.62);
+  }
+  ctx.closePath();
+  const tg=ctx.createRadialGradient(cx,cy,2,cx,cy,R);
+  tg.addColorStop(0,th.tailF);
+  tg.addColorStop(.6,th.tailG||'#ff6b4a');
+  tg.addColorStop(1,th.tailT);
+  ctx.fillStyle=tg;ctx.fill();
+
+  // 尾鳍斑纹：真实的孔雀眼斑
+  for(let i=0;i<3;i++){
+    const a=baseAng-half + (i+ .5)/3*half*2 + wob*0.12;
+    const rad=R*(0.45+ i*0.12)*(0.9+f.wag*0.1*Math.sin(f.phase*3+ i));
+    ctx.fillStyle=th.spots[i%th.spots.length];
+    ctx.globalAlpha=.85;
+    ctx.beginPath();ctx.ellipse(cx+Math.cos(a)*rad, cy+Math.sin(a)*rad*0.6, R*0.06, R*0.11, a,0,7);ctx.fill();
+    ctx.globalAlpha=.3;
+    ctx.beginPath();ctx.ellipse(cx+Math.cos(a)*rad, cy+Math.sin(a)*rad*0.6, R*0.09, R*0.16, a,0,7);ctx.fill();
+    ctx.globalAlpha=1;
+  }
+  ctx.restore();
+}
+let dorsalCache={};
+function drawDorsal(th,len,f){
+  const sp=2;
+  const a0=len*(-0.1), a1=len*0.42;      // 背鳍横跨位置
+  const wob=Math.sin(f.phase*3);
+  const peak= len*0.38*(1+0.12*Math.sin(f.phase*4));
+  ctx.beginPath();
+  ctx.moveTo(a0,-len*0.08);
+  const cpx=(a0+a1)/2;
+  ctx.quadraticCurveTo(cpx+len*0.1, -peak+wob*2, a1, -len*0.12);
+  ctx.quadraticCurveTo(cpx, -len*0.05, a0, -len*0.08);
+  const dg=ctx.createLinearGradient(0,-peak,0,0);
+  dg.addColorStop(0,th.fin);dg.addColorStop(1,'rgba(255,255,255,.2)');
+  ctx.fillStyle='rgba('+hexToRgb(th.fin)+',.75)';
+  ctx.globalAlpha=.9;
+  ctx.fill();
+  ctx.globalAlpha=1;
+}
+function hexToRgb(h){h=h.replace('#','');const n=parseInt(h,16);return (n>>16&255)+','+(n>>8&255)+','+(n&255);}
+function shade(hex,d){const [r,g,b]=[parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)];
+  return 'rgb('+Math.max(0,Math.min(255,r+d))+','+Math.max(0,Math.min(255,g+d))+','+Math.max(0,Math.min(255,b+d))+')';}
+
+/* ---- 水草绘制(真实叶形) ---- */
+function swayY(g,k){return Math.sin(T*g.sp + g.sway + k*0.7)*7;}
+function drawBackweed(g){ // 细长飘叶
+  const x=g.x,y=g.y,h=g.h;
+  ctx.strokeStyle='rgba('+(35+g.tone*30)+',115,70,.8)';ctx.lineWidth=2;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+swayY(g,0)*2, y-h*0.55, x+swayY(g,1)*5, y-h);ctx.stroke();
+  ctx.strokeStyle='rgba(70,150,95,.55)';ctx.lineWidth=1.5;
+  for(let k=0;k<6;k++){
+    const yy=y-h*0.2-k*h*0.12, xx=x+swayY(g,k);
+    ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx+10+swayY(g,k+1)*2, yy-h*0.12);ctx.stroke();
+  }
+}
+function drawMidweed(g){ // 水榕阔叶
+  const x=g.x,y=g.y,h=g.h;
+  const base=Math.min(60,h*0.8);
+  ctx.strokeStyle='rgba('+(55+g.tone*35)+',130,60,.9)';ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-base);ctx.stroke();
+  for(let s=-1;s<=1;s+=2){
+    const sway=Math.sin(T*g.sp+s*1.7)*5;
+    const ex=x+s*32+sway, ey=y-base*0.72;
+    const wd=26*(1-g.tone*0.3);
+    const lg=ctx.createLinearGradient(x,y-base,ex,ey);
+    lg.addColorStop(0,'#'+ (g.tone>.5?'2f7d4a':'3d8f52'));
+    lg.addColorStop(1,'#'+ (g.tone>.5?'5ea96a':'79c07a'));
+    ctx.fillStyle=lg;
+    ctx.beginPath();
+    ctx.moveTo(x,y-base-6);
+    ctx.quadraticCurveTo(x+(ex-x)*0.5+sway, ey-wd, ex-wd*0.3*Math.sin(T+1), ey);
+    ctx.quadraticCurveTo(x+(ex-x)*0.4, y-base-4, x, y-base-6);
+    ctx.closePath();ctx.fill();
+    // 中脉
+    ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x,y-base-2);ctx.quadraticCurveTo(x+(ex-x)*0.5, ey, ex,y) ;ctx.stroke();
+  }
+}
+function drawFrontweed(g){ // 矮丛
+  const x=g.x,y=g.y,h=g.h*0.6;
+  ctx.fillStyle='rgba('+(50+g.tone*40)+',120,55,.85)';
+  for(let k=0;k<5;k++){
+    const xx=x+(k-2)*8,kS=Math.sin(T*0.8+k)*3;
+    ctx.beginPath();ctx.ellipse(xx,y-6,7-(k%2)*2, h*0.28+kS, 0,0,7);ctx.fill();
+  }
+}
+
+/* ---- 悬浮微粒 & 气泡 ---- */
+function drawDetritus(){
+  for(const d of DETRITUS){
+    d.y-=(d.v*0.02); if(d.y< -4){d.y=H+4;d.x=rand(0,W);}
+    ctx.globalAlpha=0.28;
+    ctx.fillStyle=d.r>1?'#cfe8cf':'#d8e8e0';
+    ctx.beginPath();ctx.arc(d.x+Math.sin(T*0.5+d.p)*4,d.y,d.r,0,7);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+function bubbles(){
+  if(BUBBLES.length<18&&Math.random()<.5)BUBBLES.push({x:rand(0,W),y:H+4,r:rand(1,2.6),v:rand(14,30),p:rand(0,6)});
+  for(let i=BUBBLES.length-1;i>=0;i--){
+    const b=BUBBLES[i];b.y-=b.v*0.016;const ns=b.p+b.y*0.02;
+    ctx.globalAlpha=.3;ctx.strokeStyle='rgba(220,255,255,.8)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(b.x+Math.sin(ns)*5,b.y,b.r,0,7);ctx.stroke();
+    ctx.globalAlpha=.06;ctx.fillStyle='#fff';ctx.fill();
+    if(b.y<-6)BUBBLES.splice(i,1);
+  }
+  ctx.globalAlpha=1;
+}
+
+/* ---- 光的体积感 ---- */
+function drawLight(){
+  const amb=state.ambient;
+  // 斜射光锥
+  ctx.save();
+  ctx.globalAlpha=.15;
+  const lg=ctx.createLinearGradient(W*0.15,-10, W*0.7,H);
+  lg.addColorStop(0,'rgba(255,255,255,.9)');lg.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=lg;
+  ctx.beginPath();ctx.moveTo(W*0.12,-10);ctx.lineTo(W*0.34,-10);
+  ctx.lineTo(W*0.78,H*0.9);ctx.lineTo(W*0.42,H*0.9);ctx.closePath();ctx.fill();
+  // 水面光斑
+  ctx.globalAlpha=.20;
+  ctx.fillStyle='#fffef0';
+  for(let i=0;i<5;i++){
+    const xx=(Math.sin(T*0.4+i*2)*30+i*130)%(W-60)+W*0.1;
+    ctx.beginPath();
+    ctx.ellipse(xx,14, 40,7, 0,0,7);ctx.fill();
+  }
+  ctx.restore();
+}
+
+/* ---- feed ---- */
+function feed(x,y){
+  FEED.push({x,y,life:170});
+  for(const f of GUPPY){if(Math.hypot(f.x-x,f.y-y)<W*0.5){f.tx=x+rand(-20,20);f.ty=y+rand(-10,10);f.boost=1;}}
+}
+function drawFeed(){
+  for(let i=FEED.length-1;i>=0;i--){
+    const p=FEED[i];p.life--;
+    ctx.globalAlpha=Math.max(0,p.life/170)*.5;ctx.fillStyle='#fff7d9';
+    ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,7);ctx.fill();
+    ctx.globalAlpha=1;
+    if(p.life<=0)FEED.splice(i,1);
+  }
+}
+
+/* ---- 沙底 ---- */
+function drawSand(){
+  const sandY=H*0.86;
+  ctx.fillStyle='linear-gradient'?null:'#e7d4a8';
+  // 手动
+  const g=ctx.createLinearGradient(0,sandY-6,0,H);
+  g.addColorStop(0,'rgba(224,205,160,.55)');g.addColorStop(1,'rgba(194,172,128,.8)');
+  ctx.fillStyle=g;
+  ctx.beginPath();ctx.moveTo(0,sandY+6);
+  ctx.quadraticCurveTo(W*0.3,sandY-8,W*0.5,sandY);
+  ctx.quadraticCurveTo(W*0.72,sandY+4,W,sandY-10);
+  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+  // 沙砾颗粒
+  ctx.fillStyle='rgba(255,250,225,.5)';
+  for(let i=0;i<120;i++){
+    const x=(Math.sin(i*97.13)*.5+.5)*W, y=sandY+rand(2,30)-8;
+    ctx.beginPath();ctx.arc(x,y,0.6+Math.random()*0.8,0,7);ctx.fill();
+  }
+  // 石头
+  for(const s of FOODP.stones){
+    const sg=ctx.createRadialGradient(s.x-s.r*.3,s.y-s.r*.3,2,s.x,s.y,s.r);
+    sg.addColorStop(0,'#'+(s.tone>.5?'9aa39a':'8b9188'));sg.addColorStop(1,'#'+(s.tone>.5?'5f6a63':'4e574f'));
+    ctx.fillStyle=sg;ctx.beginPath();ctx.ellipse(s.x,s.y,s.r,s.r*0.7,0,0,7);ctx.fill();
+  }
+  // 沉木
+  drawWood();
+  // 前景水草遮住沙线(矮丛)在最后画避免盖住
+}
+function drawWood(){
+  const wd=FOODP.wood;if(!wd)return;
+  ctx.save();ctx.translate(wd.x,wd.y);ctx.rotate(wd.rot);
+  ctx.fillStyle='#5a4632';
+  ctx.beginPath();
+  ctx.moveTo(0,0);ctx.quadraticCurveTo(26,-22,42,-10);ctx.lineTo(44,4);
+  ctx.quadraticCurveTo(24,14,0,6);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#6e5840';
+  ctx.beginPath();ctx.moveTo(0,-2);ctx.quadraticCurveTo(6,-30,18,-34);ctx.lineTo(20,-28);ctx.quadraticCurveTo(10,-20,4,-4);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(30,20,12,.5)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(4,0);ctx.lineTo(34,-8);ctx.moveTo(2,-3);ctx.lineTo(14,-26);ctx.stroke();
+  ctx.restore();
+}
+
+/* ---- 主循环 ---- */
+let prev=0;
+function frame(ts){
+  requestAnimationFrame(frame);
+  if(!prev)prev=ts;
+  const dt=Math.min(0.05,(ts-prev)/1000);prev=ts;
+  T+=dt;
+  const amb=state.ambient;
+
+  ctx.clearRect(0,0,W,H);
+  // 水体
+  const wg=ctx.createLinearGradient(0,0,0,H);
+  wg.addColorStop(0,amb.w[0]);wg.addColorStop(.5,amb.w[1]);wg.addColorStop(1,amb.w[2]);
+  ctx.fillStyle=wg;ctx.fillRect(0,0,W,H);
+  drawLight();
+  // 后景水草(在鱼后面)
+  for(const g of FOODP.back)drawBackweed(g);
+
+  updateSwarm(dt);
+  // 鱼(按 y 排序，下面的鱼略暗)
+  GUPPY.sort((a,b)=>a.y-b.y);
+  for(const f of GUPPY){
+    ctx.globalAlpha = .92 + (f.y/H)*0.08;
+    drawGuppy(f);
+  }
+  ctx.globalAlpha=1;
+  // 名字标签：鼠标靠近哪条，名字就轻轻浮现（置顶绘制）
+  for(const f of GUPPY){
+    const dx=f.x-POINTER.x, dy=f.y-POINTER.y;
+    if(POINTER.on && dx*dx+dy*dy < 68*68) drawNameTag(f);
+  }
+
+  // 中景水草
+  for(const g of FOODP.mid)drawMidweed(g);
+  drawSand();
+  drawDetritus();
+  for(const g of FOODP.front)drawFrontweed(g);
+  bubbles();
+  drawFeed();
+
+  if(!GUPPY.length){
+    for(let i=0;i<9;i++)GUPPY.push(makeFish());
+  }
+}
+
+/* ---------------- 交互 ---------------- */
+// 鼠标位置，用于让名字标签跟着被靠近的鱼浮现
+const POINTER={x:-999,y:-999,on:false};
+function drawNameTag(f){
+  const x=f.x, y=f.y-26-f.len*0.4;
+  ctx.font='12px "Noto Serif SC",serif';
+  const w=ctx.measureText(f.name).width+18;
+  ctx.fillStyle='rgba(255,255,255,.86)';
+  roundRectPath(x-w/2, y-20, w, 22, 9); ctx.fill();
+  ctx.beginPath();ctx.moveTo(x-4,y+2);ctx.lineTo(x+4,y+2);ctx.lineTo(x,y+8);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#3c6673';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(f.name,x,y-9);
+}
+function roundRectPath(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+canvas.addEventListener('pointermove',e=>{
+  const r=canvas.getBoundingClientRect();
+  const cx=e.clientX-r.left, cy=e.clientY-r.top;
+  if(cx>=0&&cx<=W&&cy>=0&&cy<=H){POINTER.x=cx;POINTER.y=cy;POINTER.on=true;}
+  else POINTER.on=false;
+});
+canvas.addEventListener('pointerleave',()=>{POINTER.on=false;});
+canvas.addEventListener('pointerdown',e=>{const r=canvas.getBoundingClientRect();feed(e.clientX-r.left,e.clientY-r.top);});
+const thought=document.getElementById('thought');
+const thoughts=['别坐太久，起来看会儿水吧 🌊','眼睛累了就眨眨，看看远处 🍃','喝口水，喉咙舒服一些 💧','你做得已经很好了，歇会儿 ☁️'];
+setInterval(()=>{const txt=thoughts[Math.floor(Math.random()*thoughts.length)];
+  document.getElementById('note').textContent='🌬️ '+txt;
+  thought.style.animation='none';void thought.offsetWidth;thought.style.animation='fadeIn .6s ease both';},120000);
+
+/* ---------------- 启动 ---------------- */
+function boot(){
+  resize();
+  if(!GUPPY.length)for(let i=0;i<9;i++)GUPPY.push(makeFish());
+  renderReminder();renderWeatherUI();tickClock();
+  frame(0);
+  locateAndFetch().then(()=>{
+    renderWeatherUI();
+    tickClock();
+    document.querySelector('.tank-wrap').style.filter='brightness('+state.ambient.light+') saturate('+(1+state.ambient.warm)+')';
+  }).catch(()=>{}).finally(()=>document.getElementById('loading').classList.add('hide'));
+}
+window.addEventListener('load',boot);
+setInterval(tickClock,30000);
+})();
+</script>
+</body>
+</html>
