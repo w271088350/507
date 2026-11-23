@@ -1,8 +1,8 @@
 # InoProShop MCP 接入手册
 
-三款工具都通过 InoProShop 的 ScriptEngine 操作 IDE，必须先满足：
+两款工具都通过 InoProShop 的 ScriptEngine 操作 IDE，必须先满足：
 
-- Windows（三款都只支持 Windows）
+- Windows（两款都只支持 Windows）
 - 已安装 InoProShop，且含目标 AC700 的**设备描述/固件包**
 - Node.js ≥ 18
 - 工程接口基线：InoProShop 1.9.1.6 / SP11；其他版本需实测
@@ -61,7 +61,7 @@ npm.cmd ci --ignore-scripts
 
 ## 方案 B：x2124824695-stack/inoproshop-mcp（工程级稳妥版）
 
-由 LIMIT 单文件版整合改进而来，模板驱动，支持任意 InoProShop 支持的型号（含 AC700）。
+由社区版本整合改进而来，模板驱动，支持任意 InoProShop 支持的型号（含 AC700）。
 
 ### 安装
 
@@ -129,37 +129,12 @@ GitHub "Download ZIP" 不含 `dist`，必须自己构建。
 
 ---
 
-## 方案 C：LIMIT-LMT/InoProShop_LIMIT_MCP（最简）
-
-单文件 `bundle.min.js`，社区最热，适合快速跑通。
-
-```json
-{
-  "mcpServers": {
-    "codesys_local": {
-      "command": "node",
-      "args": [
-        "path/to/bundle.min.js",
-        "--codesys-path", "D:/Inovance Control/InoProShop/CODESYS/Common/InoProShop.exe",
-        "--codesys-profile", "InoProShop(V1.9.1.6)",
-        "--workspace", "C:/path/to/workspace"
-      ]
-    }
-  }
-}
-```
-
-可建/开工程、读写 ST、配 EtherCAT 设备、管任务/GVL/DUT、编译取错误。限制：绑定 1.9.1.6 SP11；单文件版每次工具调用都会启动并关闭一个 IDE 进程，速度和工程锁处理弱于常驻版。
-
----
-
 ## 选型速查
 
 | 需求 | 选择 |
 |---|---|
 | 第一次接入、想最快写出代码 | A |
 | 多型号/多工程、要模板与审计 | B |
-| 只要单文件、任务简单 | C |
 | 需要在线下载/监视 | B（`--enable-online`） |
 | 需要读伺服参数 | A（`codesys_servo`） |
 

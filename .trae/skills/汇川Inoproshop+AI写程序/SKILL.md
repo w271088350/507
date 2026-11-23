@@ -1,6 +1,6 @@
 ---
 name: "汇川Inoproshop+AI写程序"
-description: "指导在汇川 AC700 系列 PLC（InoProShop/CODESYS V3）上，用三款 InoProShop MCP 让 AI 直接读写工程、编写 ST、配置任务并编译。当用户要求为汇川 AC700/AM600/AC800 写程序、接入 InoProShop MCP 或让 AI 自动写 PLC 程序时使用。"
+description: "指导在汇川 AC700 系列 PLC（InoProShop/CODESYS V3）上，用两款 InoProShop MCP 让 AI 直接读写工程、编写 ST、配置任务并编译。当用户要求为汇川 AC700/AM600/AC800 写程序、接入 InoProShop MCP 或让 AI 自动写 PLC 程序时使用。"
 ---
 
 # 汇川 InoProShop + AI 写程序
@@ -17,15 +17,14 @@ description: "指导在汇川 AC700 系列 PLC（InoProShop/CODESYS V3）上，�
 2. 工程文件是 InoProShop 二进制 `.project`，GitHub 上**没有** AC700 专用开源工程；开源生态集中在"同平台 ST/FB 代码 + PLCopenXML(TC6) 工程"
 3. **ST 代码和 POUs 可以跨型号复用；设备树、EtherCAT 从站、轴参数、IO 映射、PDO 绝对不能跨型号直接复制**
 
-## 三款 MCP 选型
+## 两款 MCP 选型
 
 | 工具 | 定位 | 关键特点 | 何时选 |
 |---|---|---|---|
 | [Polarzin/Inoproshop-MCP](https://github.com/Polarzin/Inoproshop-MCP) | 首选，开箱即用 | MIT、无需构建、`codesys_engineering`+`codesys_servo`、自带三轴飞剪 ST 示例 | 大多数场景，尤其快速验证 |
 | [x2124824695-stack/inoproshop-mcp](https://github.com/x2124824695-stack/inoproshop-mcp) | 工程级稳妥版 | 模板机制、写入 hash 校验、结构化编译诊断、可选在线下载/监视 | 多型号、需可审计、生产前验证 |
-| [LIMIT-LMT/InoProShop_LIMIT_MCP](https://github.com/LIMIT-LMT/InoProShop_LIMIT_MCP) | 最简接入 | 单文件 `bundle.min.js`、社区最热 | 只做简单离线任务，或上面两款跑不通时 |
 
-三款共同前提：**Windows + 已安装含 AC700 设备包的 InoProShop + Node.js ≥ 18**。工程接口基线为 InoProShop 1.9.1.6 / SP11，V1.10.x 需实测。
+两款共同前提：**Windows + 已安装含 AC700 设备包的 InoProShop + Node.js ≥ 18**。工程接口基线为 InoProShop 1.9.1.6 / SP11，V1.10.x 需实测。
 
 详细安装、参数、能力差异见 [references/mcp-setup.md](references/mcp-setup.md)。
 
@@ -118,7 +117,6 @@ AI 建工程必须基于这个模板，不要凭空造控制器。
 
 - [Polarzin/Inoproshop-MCP](https://github.com/Polarzin/Inoproshop-MCP)（含飞剪示例 `examples/c6/`）
 - [x2124824695-stack/inoproshop-mcp](https://github.com/x2124824695-stack/inoproshop-mcp)（模板机制与工具清单）
-- [LIMIT-LMT/InoProShop_LIMIT_MCP](https://github.com/LIMIT-LMT/InoProShop_LIMIT_MCP)
 - [Roarpeng/LMM](https://github.com/Roarpeng/LMM)（AM600/InoProShop 实战 ST 风格参考：FB_Servo、FB_XDual、PRG_TcpHmi）
 - [stefandreyer/OSCAT-BASIC](https://github.com/stefandreyer/OSCAT-BASIC)（可导入 InoProShop 的通用库）
 - 汇川官网 AC700 产品页与《中型 PLC 编程手册（AM400/AM600/AC800/AC700）》
