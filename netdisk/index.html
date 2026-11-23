@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>星云盘 · 我的网盘</title>
+<meta name="description" content="星云盘 Web 版：上传文件、新建文件夹、在线预览、回收站还原，4TB 空间。" />
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h3.2c.7 0 1.4.3 1.9.8l1.1 1.1c.5.5 1.1.8 1.8.8h5A2.5 2.5 0 0 1 21 10v8.5A2.5 2.5 0 0 1 18.5 21h-13A2.5 2.5 0 0 1 3 18.5v-11Z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h7l5 5v13H6V3Z"/><path d="M13 3v5h5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m4 17 5-4.5 4 3.5 3-2.6 4 3.6"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2.5"/><path d="m16 12 5-3v6l-5-3Z"/></symbol>
+  <symbol id="i-audio" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></symbol>
+  <symbol id="i-pdf" viewBox="0 0 24 24"><path d="M6 3h7l5 5v13H6V3Z"/><path d="M13 3v5h5"/><path d="M9 15h6M9 18h4"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-restore" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2.4 7"/><path d="M4 5v5h5"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-drive" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></symbol>
+</svg>
+
+<!-- 登录 -->
+<div class="login" id="login">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 32 32" width="40" height="40">
+        <defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c8cff"/><stop offset="1" stop-color="#39e6c3"/></linearGradient></defs>
+        <circle cx="16" cy="16" r="6" fill="url(#lg2)"/>
+        <ellipse cx="16" cy="16" rx="14" ry="5.6" fill="none" stroke="url(#lg2)" stroke-width="1.4" opacity=".75" transform="rotate(-24 16 16)"/>
+      </svg>
+    </div>
+    <h1>星云盘 <span>4T</span></h1>
+    <p>输入任意昵称即可进入你的云空间。<br/><small>演示版：文件加密存储在当前浏览器中，不会上传到服务器。</small></p>
+    <form id="loginForm" autocomplete="off">
+      <label class="field">
+        <svg class="ic"><use href="#i-user"/></svg>
+        <input id="nickname" type="text" maxlength="20" placeholder="你的昵称，例如：小林" required />
+      </label>
+      <button class="btn solid full" type="submit">进入网盘</button>
+    </form>
+  </div>
+</div>
+
+<!-- 主应用 -->
+<div class="app hidden" id="app">
+  <aside class="side">
+    <div class="side-brand">
+      <svg viewBox="0 0 32 32" width="26" height="26">
+        <defs><linearGradient id="lg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c8cff"/><stop offset="1" stop-color="#39e6c3"/></linearGradient></defs>
+        <circle cx="16" cy="16" r="6" fill="url(#lg3)"/>
+        <ellipse cx="16" cy="16" rx="14" ry="5.6" fill="none" stroke="url(#lg3)" stroke-width="1.4" opacity=".75" transform="rotate(-24 16 16)"/>
+      </svg>
+      <span>星云盘</span>
+      <em>4T</em>
+    </div>
+
+    <button class="btn solid upload-main" id="uploadBtn">
+      <svg class="ic"><use href="#i-upload"/></svg> 上传文件
+    </button>
+
+    <nav class="side-nav" id="sideNav">
+      <a data-view="all" class="active"><svg class="ic"><use href="#i-drive"/></svg>全部文件<span class="count" data-count-for="all"></span></a>
+      <a data-view="image"><svg class="ic"><use href="#i-image"/></svg>图片<span class="count" data-count-for="image"></span></a>
+      <a data-view="video"><svg class="ic"><use href="#i-video"/></svg>视频<span class="count" data-count-for="video"></span></a>
+      <a data-view="doc"><svg class="ic"><use href="#i-file"/></svg>文档<span class="count" data-count-for="doc"></span></a>
+      <a data-view="trash"><svg class="ic"><use href="#i-trash"/></svg>回收站<span class="count" data-count-for="trash"></span></a>
+    </nav>
+
+    <div class="quota">
+      <div class="quota-head"><span>存储空间</span><b id="quotaText">0 B / 4 TB</b></div>
+      <div class="quota-bar"><i id="quotaFill"></i></div>
+      <div class="quota-foot" id="quotaPct">已使用 0%</div>
+    </div>
+
+    <a class="side-back" id="backHome" href="#" target="_blank" rel="noopener">← 返回产品官网</a>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <label class="search">
+        <svg class="ic"><use href="#i-search"/></svg>
+        <input id="searchInput" type="search" placeholder="搜索文件或文件夹" />
+      </label>
+      <div class="top-actions">
+        <span class="user-chip" id="userChip"><svg class="ic"><use href="#i-user"/></svg><b id="userName"></b></span>
+        <button class="icon-btn" id="logoutBtn" title="退出登录"><svg class="ic"><use href="#i-close"/></svg></button>
+      </div>
+    </header>
+
+    <div class="crumb" id="crumb"></div>
+
+    <div class="toolbar" id="toolbar">
+      <button class="btn soft" id="newFolderBtn"><svg class="ic"><use href="#i-plus"/></svg> 新建文件夹</button>
+      <div class="toolbar-right">
+        <select id="sortSelect" class="select" title="排序">
+          <option value="name-asc">名称 A→Z</option>
+          <option value="name-desc">名称 Z→A</option>
+          <option value="date-desc" selected>最新修改</option>
+          <option value="date-asc">最早修改</option>
+          <option value="size-desc">从大到小</option>
+          <option value="size-asc">从小到大</option>
+        </select>
+        <div class="seg" id="viewSeg">
+          <button data-view="list" class="active" title="列表"><svg class="ic"><use href="#i-list"/></svg></button>
+          <button data-view="grid" title="网格"><svg class="ic"><use href="#i-grid"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <section class="content" id="content">
+      <div class="list-head" id="listHead">
+        <span>名称</span><span>大小</span><span>修改时间</span><span></span>
+      </div>
+      <div class="items" id="items"></div>
+      <div class="empty hidden" id="empty">
+        <div class="empty-art"><svg class="ic"><use href="#i-drive"/></svg></div>
+        <h3 id="emptyTitle">这里还空着</h3>
+        <p id="emptyDesc">把文件拖到这里，或点击「上传文件」开始。</p>
+      </div>
+    </section>
+
+    <div class="drop-overlay hidden" id="dropOverlay">
+      <div class="drop-box"><svg class="ic"><use href="#i-upload"/></svg><b>松开即可上传</b><span>文件将保存到当前文件夹</span></div>
+    </div>
+
+    <div class="progress-panel hidden" id="progressPanel">
+      <div class="pp-head"><b>传输列表</b><button class="pp-clear" id="progressClear">清空</button></div>
+      <div id="progressList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal hidden" id="modal">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<input type="file" id="fileInput" multiple hidden />
+
+<script src="./app.js"></script>
+</body>
+</html>
